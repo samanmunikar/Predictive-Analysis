@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+Created on Fri Dec 13 14:42:45 2019
 
-This is a temporary script file.
+@author: i11044
 """
 
 import pandas as pd
@@ -18,6 +18,11 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+
+from sklearn.metrics import r2_score
 #
 #data = pd.read_csv("../Datasets/insurance.csv")
 #
@@ -41,7 +46,7 @@ from sklearn.preprocessing import StandardScaler
 #print(count_nan[count_nan > 0])
 
 #option2 for filling NaN # reloading fresh dataset for option 2
-data = pd.read_csv("../Datasets/insurance.csv")
+data = pd.read_csv("../../Datasets/insurance.csv")
 imputer = SimpleImputer(strategy='mean')
 imputer.fit(data['bmi'].values.reshape(-1, 1))
 data['bmi'] = imputer.transform(data['bmi'].values.reshape(-1, 1))
@@ -189,4 +194,25 @@ X_test= s_scaler.transform(X_test.astype(np.float))
 print("Standard Scaling")
 print(X_train)
 
+############################################02_05_DecisionTree##############################################
 
+dt = DecisionTreeRegressor(random_state=0)
+
+#test train split
+X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size = 0.33, random_state = 0 )
+
+#standard scaler (fit transform on train, fit only on test)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train.astype(np.float))
+X_test= sc.transform(X_test.astype(np.float))
+
+
+#fit model
+dt = dt.fit(X_train,y_train.values.ravel())
+y_train_pred = dt.predict(X_train)
+y_test_pred = dt.predict(X_test)
+
+#print score
+print('dt train score %.3f, dt test score: %.3f' % (
+dt.score(X_train,y_train),
+dt.score(X_test, y_test)))
